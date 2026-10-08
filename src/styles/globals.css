@@ -1,0 +1,189 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+  Design tokens keyed to the Myvisapp mark: the deep violet of the disc is the
+  primary, the lighter violet of the wordmark is the highlight. Light only —
+  the product is deliberately single-theme.
+*/
+:root {
+  --radius: 0.25rem;
+
+  /* Ground and ink. A cool off-white, so the violet reads as brand and not
+     as a tint the page picked up by accident. */
+  --background: #f7f6fb;
+  --foreground: #16131f;
+  --card: #ffffff;
+  --card-foreground: #16131f;
+  --popover: #ffffff;
+  --popover-foreground: #16131f;
+
+  /* Brand violet */
+  --primary: #4416c4;
+  --primary-foreground: #ffffff;
+  --brand-light: #7a4de8;
+  --brand-deep: #2a0b78;
+
+  /* Secondary = white surface with a hairline */
+  --secondary: #ffffff;
+  --secondary-foreground: #16131f;
+
+  --muted: #fafafd;
+  --muted-foreground: #6a6680;
+  --label: #413d52;
+
+  --accent: #efebfd;
+  --accent-foreground: #4416c4;
+
+  --destructive: #a32a3e;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e2f0;
+  --input: #cfcade;
+  --ring: #4416c4;
+
+  /* Codes, references, versions — a muted violet, not a second brand colour */
+  --code-accent: #6e56cf;
+
+  /* Status surfaces, each a text / surface / border triple */
+  --info: #4416c4;
+  --info-surface: #efebfd;
+  --info-border: #d6ccf7;
+  --success: #1c6448;
+  --success-surface: #ecf6f1;
+  --success-border: #bddccd;
+  --warning: #7a5410;
+  --warning-surface: #fdf6e7;
+  --warning-border: #e8d5a4;
+  --danger: #a32a3e;
+  --danger-surface: #fdedf0;
+  --danger-border: #f0c5ce;
+
+  /*
+    Easing. Built-in curves are too weak to read as physical, so these are the
+    asymmetric ones: steep start, slow settle.
+  */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-light: var(--brand-light);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-label: var(--label);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-code-accent: var(--code-accent);
+
+  --color-info: var(--info);
+  --color-info-surface: var(--info-surface);
+  --color-info-border: var(--info-border);
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+  --color-success-border: var(--success-border);
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
+  --color-warning-border: var(--warning-border);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
+  --color-danger-border: var(--danger-border);
+
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  /* Geometric sans, a sibling to the wordmark. Headings only. */
+  --font-display: "Plus Jakarta Sans", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  /* Headings are the serif voice throughout. */
+  h1, h2, h3 {
+    @apply font-display font-semibold tracking-[-0.015em];
+  }
+}
+
+@utility code {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* The uppercase mono rule used as a section legend on every screen. */
+@utility legend-rule {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ *
+ * Three animations, deliberately. Everything a person touches many times a
+ * day — the password Show toggle, field focus, the step rail — stays
+ * instant: motion there would be felt as lag, not polish.
+ *
+ * Every rule below ships a reduced-motion variant that removes the movement
+ * and keeps the meaning, so a state change is still legible with nothing
+ * travelling across the screen.
+ * ------------------------------------------------------------------ */
+
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /*
+    A page's form column on arrival. Seen once per step of onboarding, so it
+    earns a little motion; `backwards` holds the first frame through the
+    paint before it starts.
+  */
+  .enter-rise {
+    animation: enter-rise 320ms var(--ease-out-expo) backwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @layer components {
+    /* Swap the animation rather than deleting it: fade, do not travel. */
+    .enter-rise {
+      animation: enter-fade 320ms var(--ease-out-expo) backwards;
+    }
+  }
+}
